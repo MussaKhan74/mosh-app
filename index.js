@@ -1,3 +1,5 @@
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 const startupDebugger = require("debug")("app:startup");
 const dbDebugger = require("debug")("app:db");
 const config = require("config");
@@ -12,6 +14,8 @@ const app = express();
 // CONFIGURATION
 console.log("Applicaiton Name: " + config.get("name"));
 console.log("Mail Server: " + config.get("mail.host"));
+
+dotenv.config();
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -30,4 +34,12 @@ app.use(logger);
 
 // PORT
 const port = process.env.PORT || 3000;
+
+// DB
+// mongoose.set("strictQuery", false);
+// mongoose
+//   .connect(process.env.MONGO_DB)
+//   .then(() => console.log("DB CONNECTED"))
+//   .catch((error) => console.log(error));
+
 app.listen(port, () => console.log(`Listening on PORT:${port} ...`));
