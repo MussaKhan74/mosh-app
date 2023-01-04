@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const Fawn = require("fawn");
 const startupDebugger = require("debug")("app:startup");
 const dbDebugger = require("debug")("app:db");
 const config = require("config");
@@ -16,6 +17,8 @@ console.log("Applicaiton Name: " + config.get("name"));
 console.log("Mail Server: " + config.get("mail.host"));
 
 dotenv.config();
+
+Fawn.init(mongoose);
 
 app.use(express.json());
 app.use(express.static("public"));

@@ -7,26 +7,72 @@ mongoose
   .catch((error) => console.log(error));
 
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+    // match: /pattern/,
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ["web", "mobile", "networks"],
+    lowercase: true,
+    // uppercase: true,
+    trim: true,
+  },
   author: String,
-  tags: [String],
+  tags: {
+    type: Array,
+    validate: {
+      // ASYNC VALIDATOR
+      isAsync: true,
+      validator: function (v, callback) {
+        setTimeout(() => {
+          const result = v && v.length > 0;
+          callback(result);
+        }, 4000);
+      },
+
+      // NORMAL VALIDATOR
+      // validator: function (v) {
+      //   return v && v.length > 0;
+      // },
+      message: "Please add at least one tag",
+    },
+  },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  price: {
+    type: Number,
+    required: function () {
+      return this.isPublished;
+    },
+    min: 10,
+    max: 100,
+    get: (v) => Math.round(v), // read a property from db
+    set: (v) => Math.round(v), // set/save a property in db
+  },
 });
 
 const Course = mongoose.model("Course", courseSchema);
 
 // Create Document(Row) in Course Collection(Table)
 async function createCourse() {
-  const course = new Course({
-    name: "Node.js",
-    author: "Mussa",
-    tags: ["node", "backend"],
-    isPublished: true,
-  });
+  try {
+    const course = new Course({
+      name: "Node.js",
+      author: "Mussa",
+      tags: ["node", "backend"],
+      isPublished: true,
+    });
 
-  const result = await course.save();
-  console.log(result);
+    const result = await course.save();
+    console.log(result);
+  } catch (err) {
+    for (fields in err.errors) console.log(err.errors[fields].message);
+  }
 }
 
 createCourse();
