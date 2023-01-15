@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "config": "^3.3.8",
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
@@ -17,6 +18,7 @@
     "fawn": "^2.1.5",
     "helmet": "^6.0.1",
     "joi": "^17.7.0",
+    "lodash": "^4.17.4",
     "mongoose": "^6.8.2",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20"

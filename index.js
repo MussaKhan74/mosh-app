@@ -1,3 +1,5 @@
+const auth = require("./routes/auth");
+const users = require("./routes/users");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const Fawn = require("fawn");
@@ -24,6 +26,7 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(helmet());
 app.use("/api/courses", courses);
+app.use("/api/auth", auth);
 
 if (app.get("env") === "development") {
   app.use(morgan("tiny"));
@@ -34,6 +37,9 @@ if (app.get("env") === "development") {
 dbDebugger("Connected to the database....");
 
 app.use(logger);
+
+// USER ROUTE
+app.use("/api/users", users);
 
 // PORT
 const port = process.env.PORT || 3000;
