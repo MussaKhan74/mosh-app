@@ -1,3 +1,7 @@
+require("express-async-errors");
+const winston = require("winston");
+require("winston-mongodb");
+const error = require("./middleware/error");
 const auth = require("./routes/auth");
 const users = require("./routes/users");
 const dotenv = require("dotenv");
@@ -13,6 +17,31 @@ const logger = require("./logger");
 const courses = require("./routes/courses");
 const express = require("express");
 const app = express();
+
+// HANDLING UNCAUGHT EXCEPTION
+process.on("uncaughtException", (ex) => {
+  console.log("WE GO AN UNCAUGHT EXCEPTION");
+  winston.error(ex.message, ex);
+  process.exit(1);
+});
+
+winston.ExceptionHandler(
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
+
+// UNHANDLED PROMISE REJECTION
+process.on("unhandledRejection", (ex) => {
+  console.log("WE GO AN UNCAUGHT EXCEPTION");
+  winston.error(ex.message, ex);
+  process.exit(1);
+});
+
+winston.add(winston.transports.File, { filename: "logfile.log" });
+winston.add(winston.transports.mongoDB, { db: "db://url:shouldbeput.here" });
+winston.add(winston.transports.mongoDB, {
+  db: "db://url:shouldbeput.here",
+  level: "erro",
+});
 
 // CONFIGURATION
 console.log("Applicaiton Name: " + config.get("name"));
@@ -40,6 +69,9 @@ app.use(logger);
 app.use("/api/auth", auth);
 app.use("/api/users", users);
 app.use("/api/courses", courses);
+
+// ERROR MIDDLEWARE
+app.use(error);
 
 // PORT
 const port = process.env.PORT || 3000;
