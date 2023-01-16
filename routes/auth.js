@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const { User } = require("../models/user.js");
@@ -12,19 +14,12 @@ router.post("/", async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
   if (!user) return res.status(400).send("Invalid credentials!");
 
-  user = new User(_.pick(req.body, ["name", "email", "password"]));
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash("1234", salt);
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send("Invalid password");
 
-  //   user = new User({
-  //     name: req.body.name,
-  //     email: req.body.email,
-  //     password: req.body.password,
-  //   });
+  const token = jwt.sign({ _id: user._id }, "jwtPrivateKey");
 
-  await user.save();
-
-  res.send(_.pick(user, ["_id", "name", "email"]));
+  res.send(token);
 });
 
 function validate(req) {

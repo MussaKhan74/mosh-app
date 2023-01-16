@@ -25,8 +25,6 @@ Fawn.init(mongoose);
 app.use(express.json());
 app.use(express.static("public"));
 app.use(helmet());
-app.use("/api/courses", courses);
-app.use("/api/auth", auth);
 
 if (app.get("env") === "development") {
   app.use(morgan("tiny"));
@@ -39,7 +37,9 @@ dbDebugger("Connected to the database....");
 app.use(logger);
 
 // USER ROUTE
+app.use("/api/auth", auth);
 app.use("/api/users", users);
+app.use("/api/courses", courses);
 
 // PORT
 const port = process.env.PORT || 3000;

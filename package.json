@@ -18,6 +18,7 @@
     "fawn": "^2.1.5",
     "helmet": "^6.0.1",
     "joi": "^17.7.0",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.4",
     "mongoose": "^6.8.2",
     "morgan": "^1.10.0",
