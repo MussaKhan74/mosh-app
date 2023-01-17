@@ -1,11 +1,7 @@
 require("express-async-errors");
-const winston = require("winston");
-require("winston-mongodb");
-const error = require("./middleware/error");
-const auth = require("./routes/auth");
-const users = require("./routes/users");
+
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
+
 const Fawn = require("fawn");
 const startupDebugger = require("debug")("app:startup");
 const dbDebugger = require("debug")("app:db");
@@ -17,6 +13,11 @@ const logger = require("./logger");
 const courses = require("./routes/courses");
 const express = require("express");
 const app = express();
+
+// STARTUPS
+require("./startup/routes")();
+require("./startup/db")();
+require("./startup/logging")();
 
 // HANDLING UNCAUGHT EXCEPTION
 process.on("uncaughtException", (ex) => {
@@ -36,12 +37,12 @@ process.on("unhandledRejection", (ex) => {
   process.exit(1);
 });
 
-winston.add(winston.transports.File, { filename: "logfile.log" });
-winston.add(winston.transports.mongoDB, { db: "db://url:shouldbeput.here" });
-winston.add(winston.transports.mongoDB, {
-  db: "db://url:shouldbeput.here",
-  level: "erro",
-});
+// winston.add(winston.transports.File, { filename: "logfile.log" });
+// winston.add(winston.transports.mongoDB, { db: "db://url:shouldbeput.here" });
+// winston.add(winston.transports.mongoDB, {
+//   db: "db://url:shouldbeput.here",
+//   level: "erro",
+// });
 
 // CONFIGURATION
 console.log("Applicaiton Name: " + config.get("name"));
@@ -64,14 +65,6 @@ if (app.get("env") === "development") {
 dbDebugger("Connected to the database....");
 
 app.use(logger);
-
-// USER ROUTE
-app.use("/api/auth", auth);
-app.use("/api/users", users);
-app.use("/api/courses", courses);
-
-// ERROR MIDDLEWARE
-app.use(error);
 
 // PORT
 const port = process.env.PORT || 3000;
