@@ -1,11 +1,9 @@
 require("express-async-errors");
 
-const dotenv = require("dotenv");
-
 const Fawn = require("fawn");
 const startupDebugger = require("debug")("app:startup");
 const dbDebugger = require("debug")("app:db");
-const config = require("config");
+
 const morgan = require("morgan");
 const helmet = require("helmet");
 const Joi = require("joi");
